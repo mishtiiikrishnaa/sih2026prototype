@@ -1,0 +1,6 @@
+backend/venv
+frontend/node_modules
+.vercel
+__pycache__
+*.pyc
+backend/setu.db
