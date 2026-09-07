@@ -1,5 +1,5 @@
 fastapi
-uvicorn[standard]
+uvicorn
 sqlalchemy
 python-jose[cryptography]
 passlib[bcrypt]
@@ -7,7 +7,3 @@ bcrypt
 python-multipart
 pydantic
 pydantic-settings
-httpx
-aiofiles
-python-dotenv
-faker

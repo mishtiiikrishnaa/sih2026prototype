@@ -1,6 +1,8 @@
 backend/venv
 frontend/node_modules
+.git
 .vercel
 __pycache__
 *.pyc
 backend/setu.db
+.DS_Store
