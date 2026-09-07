@@ -10,11 +10,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+genai = None
 try:
-    import google.generativeai as genai
-    genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
+    import google.generativeai as _genai
+    _genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
+    genai = _genai
 except Exception as e:
-    logger.warning(f"Failed to configure Gemini: {e}")
+    logger.warning(f"Gemini unavailable; using tag-based matching: {e}")
 
 
 def encode_text(text: str) -> Optional[List[float]]:
@@ -22,7 +24,7 @@ def encode_text(text: str) -> Optional[List[float]]:
     Encode text to a dense vector using Gemini embedding API.
     """
     api_key = os.getenv("GEMINI_API_KEY", "")
-    if not api_key:
+    if not api_key or genai is None:
         logger.error("GEMINI_API_KEY not set; embeddings unavailable.")
         return None
     try:

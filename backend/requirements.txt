@@ -7,7 +7,6 @@ python-multipart
 pydantic
 pydantic-settings
 httpx
-google-generativeai
 aiofiles
 python-dotenv
 faker
