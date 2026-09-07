@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useAuthStore } from '../store/authStore'
 
 const api = axios.create({
-  baseURL: window.location.hostname === 'localhost' ? 'http://127.0.0.1:9000/api' : 'https://setu-backend.onrender.com/api',
+  baseURL: '/api',
   headers: { 'Content-Type': 'application/json' },
 })
 
