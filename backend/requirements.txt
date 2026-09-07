@@ -6,9 +6,6 @@ passlib[bcrypt]
 python-multipart
 pydantic
 pydantic-settings
-sentence-transformers
-numpy
-scikit-learn
 httpx
 google-generativeai
 aiofiles

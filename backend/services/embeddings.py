@@ -1,65 +1,57 @@
 """
-Embedding service using sentence-transformers.
-Computes 384-dim dense vectors for semantic similarity matching.
-Model: paraphrase-multilingual-MiniLM-L12-v2
-  - Supports 50+ languages including Hindi
-  - Runs on CPU, ~120MB download
-  - Free, open-source
+Embedding service using Gemini embed-content API.
+Replaces local sentence-transformers for serverless deployment.
 """
 
-import numpy as np
+import os
+import math
 from typing import List, Optional
 import logging
 
 logger = logging.getLogger(__name__)
 
-_model = None
-
-
-def get_model():
-    global _model
-    if _model is None:
-        try:
-            from sentence_transformers import SentenceTransformer
-            logger.info("Loading sentence-transformer model...")
-            _model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
-            logger.info("Model loaded successfully.")
-        except Exception as e:
-            logger.error(f"Failed to load sentence-transformers: {e}")
-            _model = None
-    return _model
+try:
+    import google.generativeai as genai
+    genai.configure(api_key=os.getenv("GEMINI_API_KEY", ""))
+except Exception as e:
+    logger.warning(f"Failed to configure Gemini: {e}")
 
 
 def encode_text(text: str) -> Optional[List[float]]:
     """
-    Encode text to a 384-dimensional vector.
-    Returns None if model is unavailable (graceful degradation).
+    Encode text to a dense vector using Gemini embedding API.
     """
-    model = get_model()
-    if model is None:
+    api_key = os.getenv("GEMINI_API_KEY", "")
+    if not api_key:
+        logger.error("GEMINI_API_KEY not set; embeddings unavailable.")
         return None
     try:
-        vector = model.encode(text, normalize_embeddings=True)
-        return vector.tolist()
+        result = genai.embed_content(
+            model="models/embedding-001",
+            content=text,
+            task_type="retrieval_document",
+        )
+        return result.get("embedding", [])
     except Exception as e:
-        logger.error(f"Encoding failed: {e}")
+        logger.error(f"Gemini embedding failed: {e}")
         return None
 
 
 def cosine_similarity(vec_a: List[float], vec_b: List[float]) -> float:
     """
-    Compute cosine similarity between two vectors.
-    Since we normalize embeddings, dot product == cosine similarity.
+    Compute cosine similarity between two normalized vectors using pure Python.
     """
-    a = np.array(vec_a)
-    b = np.array(vec_b)
-    if np.linalg.norm(a) == 0 or np.linalg.norm(b) == 0:
+    if not vec_a or not vec_b or len(vec_a) != len(vec_b):
         return 0.0
-    return float(np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b)))
+    dot = sum(a * b for a, b in zip(vec_a, vec_b))
+    norm_a = math.sqrt(sum(a * a for a in vec_a))
+    norm_b = math.sqrt(sum(b * b for b in vec_b))
+    if norm_a == 0 or norm_b == 0:
+        return 0.0
+    return float(dot / (norm_a * norm_b))
 
 
 def build_solver_text(user) -> str:
-    """Build a rich text representation of a solver's profile for embedding."""
     parts = [
         user.full_name or "",
         user.department or "",
@@ -72,7 +64,6 @@ def build_solver_text(user) -> str:
 
 
 def build_problem_text(problem) -> str:
-    """Build a rich text representation of a problem for embedding."""
     parts = [
         problem.title or "",
         problem.situation or "",
