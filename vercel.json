@@ -1,8 +1,6 @@
 {
-  "name": "setu-ps26043",
   "framework": "vite",
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "installCommand": "npm install",
-  "rootDirectory": "frontend"
+  "installCommand": "npm install"
 }
