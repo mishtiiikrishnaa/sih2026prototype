@@ -3,7 +3,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from datetime import datetime
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./setu.db"
+import os
+_db_path = os.path.join("/tmp", "setu.db") if os.path.isdir("/tmp") else "./setu.db"
+SQLALCHEMY_DATABASE_URL = f"sqlite:///{_db_path}"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
