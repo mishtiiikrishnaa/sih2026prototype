@@ -35,39 +35,53 @@ export default function LoginPage() {
   function fillDemo(acct) { setEmail(acct.email); setPassword('demo123'); setError('') }
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-indigo-950 via-blue-900 to-teal-950 flex items-center justify-center px-4 py-10 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-tr from-indigo-950 via-blue-900 to-teal-950 flex items-center justify-center p-4 lg:p-8 relative overflow-hidden">
       {/* Decorative orbs */}
       <div className="absolute top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-blue-600/20 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] bg-teal-600/20 rounded-full blur-[120px] pointer-events-none" />
       {/* faint radial grid */}
       <div className="absolute inset-0 opacity-40 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 20% 30%, rgba(147,197,253,0.28) 0 1px, transparent 2px)', backgroundSize: '34px 34px' }} />
 
-      <button onClick={toggleTheme} className="fixed top-5 right-5 p-2.5 rounded-full bg-white/10 hover:bg-white/15 text-white/70 hover:text-white transition backdrop-blur-md border border-white/10 shadow-lg" aria-label="Toggle theme">
+      <button onClick={toggleTheme} className="fixed top-5 right-5 p-2.5 rounded-full bg-white/10 hover:bg-white/15 text-white/70 hover:text-white transition backdrop-blur-md border border-white/10 shadow-lg z-20" aria-label="Toggle theme">
         {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
       </button>
 
-      <div className="w-full max-w-lg mx-auto z-10">
-        <div className="bg-white/[0.06] dark:bg-slate-900/30 backdrop-blur-xl rounded-3xl border border-white/10 dark:border-white/10 shadow-2xl p-8 sm:p-10 text-center">
-          {/* Brand */}
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-14 h-14 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 flex items-center justify-center shadow-xl shadow-blue-900/30 mb-4">
-              <span className="text-3xl">🌉</span>
+      <div className="grid lg:grid-cols-3 gap-6 lg:gap-8 w-full max-w-7xl mx-auto items-center z-10">
+        {/* Left — Brand + hero CTA */}
+        <div className="flex flex-col items-center lg:items-start gap-5 lg:pr-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/10 rounded-2xl backdrop-blur-md border border-white/20 flex items-center justify-center shadow-xl shadow-blue-900/30">
+              <span className="text-2xl">🌉</span>
             </div>
-            <h1 className="text-5xl font-black text-white tracking-tighter leading-none">Setu</h1>
-            <p className="text-blue-200/70 text-sm font-medium tracking-wide mt-1.5">Societal Problem-Solving Ecosystem</p>
+            <div className="text-center lg:text-left">
+              <h1 className="text-4xl font-black text-white tracking-tighter leading-none">Setu</h1>
+              <p className="text-blue-200/70 text-xs font-medium tracking-wide mt-1">Societal Problem-Solving Ecosystem</p>
+            </div>
           </div>
 
-          <h2 className="text-lg font-bold text-white mb-1.5 leading-snug">Bridge <span className="text-blue-300">government</span> challenges with <span className="text-teal-300">university</span> innovation.</h2>
-          <p className="text-blue-100/60 text-sm mb-7 leading-relaxed">From idea to verified real-world impact across Jharkhand.</p>
+          <h2 className="text-2xl lg:text-3xl font-bold text-white leading-snug text-center lg:text-left">Bridge <span className="text-blue-300">government</span> challenges with <span className="text-teal-300">university</span> innovation.</h2>
+          <p className="text-blue-100/60 text-sm leading-relaxed text-center lg:text-left">From idea to verified real-world impact across Jharkhand.</p>
 
-          <div className="h-px bg-white/10 mb-7" />
+          <Link to="/report" className="group w-full flex items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-teal-600/40 hover:from-teal-400 hover:to-emerald-400 transition-all hover:scale-[1.01] active:scale-[0.99]">
+            <Megaphone size={17} className="group-hover:animate-pulse" />
+            Report a problem — no login needed
+          </Link>
 
-          {/* Sign in */}
-          <div className="mb-3 text-left">
-            <p className="text-[11px] text-blue-200/60 font-semibold tracking-widest uppercase mb-3">Sign in</p>
+          <div className="flex flex-wrap justify-center lg:justify-start gap-2">
+            <span className="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-blue-50 text-[11px] font-medium backdrop-blur-sm">Government</span>
+            <span className="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-blue-50 text-[11px] font-medium backdrop-blur-sm">Universities</span>
+            <span className="px-3 py-1.5 rounded-full bg-white/10 border border-white/15 text-blue-50 text-[11px] font-medium backdrop-blur-sm">Industry</span>
+          </div>
+        </div>
+
+        {/* Centre — Sign in */}
+        <div className="bg-white/[0.06] dark:bg-slate-900/30 backdrop-blur-xl rounded-3xl border border-white/10 dark:border-white/10 shadow-2xl p-7 sm:p-8">
+          <div className="mb-6 text-center">
+            <h3 className="text-xl font-bold text-white mb-1">Welcome back</h3>
+            <p className="text-sm text-blue-200/60">Sign in to access your dashboard</p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-3 text-left">
+          <form onSubmit={handleLogin} className="space-y-3">
             <div>
               <label htmlFor="email" className="block text-xs font-semibold text-blue-100/90 mb-1.5">Email</label>
               <input id="email" type="email" className="w-full px-4 py-3 rounded-xl bg-white/90 dark:bg-slate-800/60 border border-white/10 dark:border-slate-600 text-text-primary placeholder:text-text-secondary text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} required />
@@ -87,31 +101,26 @@ export default function LoginPage() {
             <span className="text-[11px] text-blue-200/40">or quick access</span>
             <div className="h-px bg-white/10 flex-1" />
           </div>
-
-          {/* Demo cards */}
-          <div className="grid grid-cols-1 gap-2">
-            {DEMO_ACCOUNTS.map((acct) => (
-              <button key={acct.email} onClick={() => fillDemo(acct)} className="group flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-left transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] backdrop-blur-sm">
-                <span className="w-9 h-9 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: acct.hex, WebkitBoxShadow: `0 4px 16px -4px ${acct.hex}80, inset 0 0 0 1px rgba(255,255,255,0.18)` }}>
-                  <acct.icon size={16} />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-bold text-white text-xs leading-tight">{acct.label}</p>
-                  <p className="text-[10px] text-blue-100/50 truncate">{acct.role}</p>
-                </div>
-                <span className="text-[10px] font-mono text-blue-200/40 group-hover:text-blue-100/70 px-1.5 text-right">{acct.name}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-blue-200/40 text-[11px] mt-3 text-center">Password for all: <span className="font-mono text-blue-100/70 bg-white/10 px-1.5 py-0.5 rounded-md">demo123</span></p>
+          <p className="text-center text-[11px] text-blue-200/40">click any account on the right</p>
         </div>
 
-        <div className="mt-5">
-          <Link to="/report" className="group w-full flex items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-teal-600/40 hover:from-teal-400 hover:to-emerald-400 transition-all hover:scale-[1.01] active:scale-[0.99]">
-            <Megaphone size={17} className="group-hover:animate-pulse" />
-            Spotted a local problem? Report it — no login needed
-          </Link>
-          <p className="hidden sm:block text-blue-200/25 text-[11px] mt-4 text-center tracking-widest uppercase">S I H · 2 0 2 6 · P S 2 6 0 4 3</p>
+        {/* Right — Demo accounts */}
+        <div className="flex flex-col gap-3 lg:pl-6">
+          <p className="text-[11px] text-blue-200/60 font-semibold tracking-widest uppercase text-center lg:text-left">Quick Access</p>
+          {DEMO_ACCOUNTS.map((acct) => (
+            <button key={acct.email} onClick={() => fillDemo(acct)} className="group flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-left transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] backdrop-blur-sm">
+              <span className="w-9 h-9 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: acct.hex, WebkitBoxShadow: `0 4px 16px -4px ${acct.hex}80, inset 0 0 0 1px rgba(255,255,255,0.18)` }}>
+                <acct.icon size={16} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-bold text-white text-xs leading-tight">{acct.label}</p>
+                <p className="text-[10px] text-blue-100/50 truncate">{acct.role}</p>
+              </div>
+              <span className="text-[10px] font-mono text-blue-200/40 group-hover:text-blue-100/70 px-1.5 text-right">{acct.name}</span>
+            </button>
+          ))}
+          <p className="text-blue-200/40 text-[11px] text-center lg:text-left">Password for all: <span className="font-mono text-blue-100/70 bg-white/10 px-1.5 py-0.5 rounded-md">demo123</span></p>
+          <p className="hidden lg:block text-blue-200/25 text-[11px] mt-1 tracking-widest uppercase text-center lg:text-left">S I H · 2 0 2 6 · P S 2 6 0 4 3</p>
         </div>
       </div>
     </div>
