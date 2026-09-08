@@ -106,8 +106,13 @@ export default function LoginPage() {
           <p className="text-blue-200/40 text-[11px] mt-3 text-center">Password for all: <span className="font-mono text-blue-100/70 bg-white/10 px-1.5 py-0.5 rounded-md">demo123</span></p>
         </div>
 
-        <p className="text-blue-200/50 text-[12px] mt-5 text-center">Spotted a local problem? <Link to="/report" className="text-teal-300 hover:text-teal-200 font-semibold underline underline-offset-2 decoration-teal-500/50 hover:decoration-teal-300">Report it — no login needed →</Link></p>
-        <p className="hidden sm:block text-blue-200/25 text-[11px] mt-3 text-center tracking-widest uppercase">S I H · 2 0 2 6 · P S 2 6 0 4 3</p>
+        <div className="mt-5">
+          <Link to="/report" className="group w-full flex items-center justify-center gap-2.5 py-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white text-sm font-bold shadow-lg shadow-teal-600/40 hover:from-teal-400 hover:to-emerald-400 transition-all hover:scale-[1.01] active:scale-[0.99]">
+            <Megaphone size={17} className="group-hover:animate-pulse" />
+            Spotted a local problem? Report it — no login needed
+          </Link>
+          <p className="hidden sm:block text-blue-200/25 text-[11px] mt-4 text-center tracking-widest uppercase">S I H · 2 0 2 6 · P S 2 6 0 4 3</p>
+        </div>
       </div>
     </div>
   )

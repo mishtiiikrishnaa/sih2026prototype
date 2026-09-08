@@ -91,19 +91,22 @@ function NotificationBell() {
   )
 }
 
-function NavItem({ to, icon: Icon, label }) {
+function NavItem({ to, icon: Icon, label, highlight }) {
   return (
     <NavLink
       to={to}
       className={({ isActive }) =>
         clsx(
-          'flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors',
-          isActive
-            ? 'bg-blue-700 text-white shadow-md shadow-blue-700/20'
-            : 'text-text-secondary hover:text-text-primary hover:bg-bg-secondary'
+          'relative flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium transition-colors',
+          highlight
+            ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-lg shadow-teal-600/30 hover:from-teal-400 hover:to-emerald-400'
+            : isActive
+              ? 'bg-blue-700 text-white shadow-md shadow-blue-700/20'
+              : 'text-text-secondary hover:text-text-primary hover:bg-bg-secondary'
         )
       }
     >
+      <span className={clsx('w-1.5 h-1.5 rounded-full', highlight ? 'bg-white animate-pulse' : 'hidden')} />
       <Icon size={18} strokeWidth={2.2} />
       <span className="hidden md:inline">{label}</span>
     </NavLink>
@@ -140,7 +143,7 @@ export default function Layout() {
           {(role === 'faculty' || role === 'student') && (<NavItem to="/matches" icon={Zap} label="Matches" />)}
           {(role === 'industry_partner' || role === 'gov_admin') && (<NavItem to="/industry" icon={Factory} label="Industry" />)}
           <NavItem to="/projects" icon={FolderKanban} label="Projects" />
-          <NavItem to="/report" icon={Megaphone} label="Report" />
+          <NavItem to="/report" icon={Megaphone} label="Report" highlight />
           {(role === 'gov_admin') && (<NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" />)}
         </nav>
 
