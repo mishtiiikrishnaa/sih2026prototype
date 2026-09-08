@@ -89,16 +89,17 @@ export default function LoginPage() {
           </div>
 
           {/* Demo cards */}
-          <div className="grid grid-cols-2 gap-2">
-            {DEMO_ACCOUNTS.map((acct, i) => (
-              <button key={acct.email} onClick={() => fillDemo(acct)} className={`group flex items-center gap-2.5 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-left transition-all hover:scale-[1.02] hover:shadow-lg active:scale-[0.98] backdrop-blur-sm ${i === DEMO_ACCOUNTS.length - 1 ? 'col-span-2 justify-center' : ''}`}>
-                <span className="w-8 h-8 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: acct.hex, WebkitBoxShadow: `0 4px 16px -4px ${acct.hex}80, inset 0 0 0 1px rgba(255,255,255,0.18)` }}>
-                  <acct.icon size={15} />
+          <div className="grid grid-cols-1 gap-2">
+            {DEMO_ACCOUNTS.map((acct) => (
+              <button key={acct.email} onClick={() => fillDemo(acct)} className="group flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/25 text-left transition-all hover:scale-[1.01] hover:shadow-lg active:scale-[0.99] backdrop-blur-sm">
+                <span className="w-9 h-9 rounded-lg flex items-center justify-center text-white flex-shrink-0" style={{ backgroundColor: acct.hex, WebkitBoxShadow: `0 4px 16px -4px ${acct.hex}80, inset 0 0 0 1px rgba(255,255,255,0.18)` }}>
+                  <acct.icon size={16} />
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-bold text-white text-xs leading-tight">{acct.label}</p>
-                  <p className="text-[10px] text-blue-100/50 truncate">{acct.name}</p>
+                  <p className="text-[10px] text-blue-100/50 truncate">{acct.role}</p>
                 </div>
+                <span className="text-[10px] font-mono text-blue-200/40 group-hover:text-blue-100/70 px-1.5 text-right">{acct.name}</span>
               </button>
             ))}
           </div>
