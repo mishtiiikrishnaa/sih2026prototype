@@ -15,7 +15,6 @@ const ROLE_LABELS = {
   student: 'Student',
   gov_admin: 'Gov. Admin',
   industry_partner: 'Industry Partner',
-  citizen: 'Citizen',
 }
 
 const ROLE_COLORS = {
@@ -24,7 +23,6 @@ const ROLE_COLORS = {
   student: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-200',
   gov_admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-200',
   industry_partner: 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-200',
-  citizen: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-200',
 }
 
 function NotificationBell() {
@@ -141,7 +139,7 @@ export default function Layout() {
           {(role === 'problem_owner') && (<NavItem to="/wizard" icon={PlusCircle} label="Post" />)}
           {(role === 'faculty' || role === 'student') && (<NavItem to="/matches" icon={Zap} label="Matches" />)}
           {(role === 'industry_partner' || role === 'gov_admin') && (<NavItem to="/industry" icon={Factory} label="Industry" />)}
-          {(role === 'citizen') && (<NavItem to="/report" icon={Megaphone} label="Report" />)}
+          <NavItem to="/report" icon={Megaphone} label="Report" />
           <NavItem to="/projects" icon={FolderKanban} label="Projects" />
           {(role === 'gov_admin') && (<NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" />)}
         </nav>

@@ -1,6 +1,6 @@
 import SEED from './seedData.json'
 
-const MOCK_KEY = 'setu_mock_v2'
+const MOCK_KEY = 'setu_mock_v3'
 const MOCK_ROLES = { faculty: 32, student: 100, problem_owner: 1, gov_admin: 1 }
 
 function loadState() {

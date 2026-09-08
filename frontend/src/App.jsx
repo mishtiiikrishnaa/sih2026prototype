@@ -17,6 +17,11 @@ function RequireAuth({ children }) {
   return token ? children : <Navigate to="/login" replace />
 }
 
+function HomeRedirect() {
+  const role = useAuthStore((s) => s.user?.role)
+  return <Navigate to={role === 'industry_partner' ? '/industry' : '/problems'} replace />
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -27,7 +32,7 @@ export default function App() {
           path="/"
           element={<RequireAuth><Layout /></RequireAuth>}
         >
-          <Route index element={<Navigate to="/problems" replace />} />
+          <Route index element={<HomeRedirect />} />
           <Route path="problems" element={<ProblemsPage />} />
           <Route path="problems/:id" element={<ProblemDetailPage />} />
           <Route path="wizard" element={<WizardPage />} />

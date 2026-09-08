@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Megaphone, LocateFixed, Loader2, CheckCircle2, ImagePlus, Film, X, ArrowLeft } from 'lucide-react'
 import api from '../api/client'
+import { useAuthStore } from '../store/authStore'
 
 const DOMAINS = [
   'Water Management', 'Healthcare', 'Agriculture', 'Education',
@@ -15,6 +16,7 @@ const DISTRICTS = [
 
 export default function ReportPage() {
   const navigate = useNavigate()
+  const token = useAuthStore((s) => s.token)
   const [form, setForm] = useState({
     submitter_name: '',
     location: '',
@@ -94,7 +96,11 @@ export default function ReportPage() {
               sent to the Jharkhand education department team for review. Once verified it will appear in the public marketplace as an open challenge.
             </p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link to="/login" className="px-5 py-2.5 rounded-xl bg-white text-blue-900 text-sm font-bold hover:bg-blue-50 transition-colors">Sign in to track it</Link>
+              {token ? (
+                <Link to="/problems" className="px-5 py-2.5 rounded-xl bg-white text-blue-900 text-sm font-bold hover:bg-blue-50 transition-colors">Browse the marketplace</Link>
+              ) : (
+                <Link to="/login" className="px-5 py-2.5 rounded-xl bg-white text-blue-900 text-sm font-bold hover:bg-blue-50 transition-colors">Sign in to track it</Link>
+              )}
               <button onClick={() => { setDone(null); setForm({ submitter_name: '', location: '', district: 'Ranchi', title: '', situation: '', domain: '', desired_outcome: '' }); setFiles([]) }} className="px-5 py-2.5 rounded-xl bg-white/10 text-white text-sm font-medium hover:bg-white/15 transition-colors">Report another</button>
             </div>
           </div>
