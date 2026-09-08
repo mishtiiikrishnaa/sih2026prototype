@@ -88,20 +88,54 @@ export default function ReportPage() {
         </button>
 
         {done ? (
-          <div className="bg-white/5 dark:bg-slate-900/20 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-8 text-center">
-            <CheckCircle2 size={44} className="mx-auto text-teal-300 mb-3" />
-            <h1 className="text-xl font-bold text-white mb-2">Report submitted!</h1>
-            <p className="text-sm text-blue-100/70 mb-5 leading-relaxed">
-              Thank you, <span className="font-semibold text-white">{done.submitted_by}</span>. Your report <span className="font-semibold text-teal-300">#{done.id}</span> has been
-              sent to the Jharkhand education department team for review. Once verified it will appear in the public marketplace as an open challenge.
-            </p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {token ? (
-                <Link to="/problems" className="px-5 py-2.5 rounded-xl bg-white text-blue-900 text-sm font-bold hover:bg-blue-50 transition-colors">Browse the marketplace</Link>
-              ) : (
-                <Link to="/login" className="px-5 py-2.5 rounded-xl bg-white text-blue-900 text-sm font-bold hover:bg-blue-50 transition-colors">Sign in to track it</Link>
-              )}
-              <button onClick={() => { setDone(null); setForm({ submitter_name: '', location: '', district: 'Ranchi', title: '', situation: '', domain: '', desired_outcome: '' }); setFiles([]) }} className="px-5 py-2.5 rounded-xl bg-white/10 text-white text-sm font-medium hover:bg-white/15 transition-colors">Report another</button>
+          <div className="space-y-4">
+            <div className="bg-white/5 dark:bg-slate-900/20 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl p-8 text-center">
+              <div className="w-16 h-16 mx-auto rounded-full bg-teal-500/20 border-2 border-teal-400/40 flex items-center justify-center mb-4">
+                <CheckCircle2 size={34} className="text-teal-300" />
+              </div>
+              <h1 className="text-2xl font-bold text-white mb-1.5">Report received</h1>
+              <p className="text-sm text-blue-100/70 mb-6 leading-relaxed">The department has been notified. Your report is now queued as a challenge in the ecosystem.</p>
+
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <span className="px-3 py-1.5 rounded-xl bg-teal-500/20 border border-teal-400/30 text-teal-300 text-xs font-bold font-mono">REF #{done.id}</span>
+                <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-blue-100 text-xs font-medium">{done.district || 'Ranchi'}</span>
+                {done.community_submitted && <span className="px-3 py-1.5 rounded-xl bg-white/10 border border-white/10 text-blue-100 text-xs font-medium">community submission</span>}
+              </div>
+
+              <div className="bg-white/5 rounded-2xl border border-white/10 p-4 mb-6 text-left">
+                <p className="text-xs font-semibold text-blue-200/60 uppercase tracking-wide mb-2">Your submission</p>
+                <p className="text-sm font-semibold text-white mb-1">{done.title}</p>
+                <p className="text-xs text-blue-100/60 leading-relaxed">{done.situation}</p>
+              </div>
+
+              <div className="mb-7 text-left">
+                <p className="text-xs font-semibold text-blue-200/60 uppercase tracking-wide mb-3">What happens next</p>
+                <div className="space-y-2.5">
+                  {[
+                    { n: 1, t: 'Received', d: 'Logged on the dashboard, dept gets a notification', active: true },
+                    { n: 2, t: 'Under review', d: 'Department validates the report details', active: false },
+                    { n: 3, t: 'Published to the marketplace', d: 'Shows up as an open challenge for universities', active: false },
+                    { n: 4, t: 'Matched & solved', d: 'A team picks it up, builds, and it gets verified on ground', active: false },
+                  ].map(step => (
+                    <div key={step.n} className="flex items-start gap-3">
+                      <span className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5 ${step.active ? 'bg-teal-500 text-teal-950' : 'bg-white/10 text-blue-200/60'}`}>{step.n}</span>
+                      <div>
+                        <p className={`text-xs font-bold ${step.active ? 'text-teal-300' : 'text-white'}`}>{step.t}</p>
+                        <p className="text-[11px] text-blue-100/50 leading-snug">{step.d}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-3">
+                {token ? (
+                  <Link to="/problems" className="px-5 py-2.5 rounded-xl bg-white text-blue-900 text-sm font-bold hover:bg-blue-50 transition-colors">Browse the marketplace</Link>
+                ) : (
+                  <p className="text-[11px] text-blue-200/50 max-w-xs">Save your reference number. Officials can look it up by that id — or <Link to="/login" className="text-teal-300 hover:underline font-semibold">sign in</Link> to track it directly.</p>
+                )}
+                <button onClick={() => { setDone(null); setForm({ submitter_name: '', location: '', district: 'Ranchi', title: '', situation: '', domain: '', desired_outcome: '' }); setFiles([]) }} className="px-5 py-2.5 rounded-xl bg-white/10 text-white text-sm font-medium hover:bg-white/15 transition-colors">Report another</button>
+              </div>
             </div>
           </div>
         ) : (
