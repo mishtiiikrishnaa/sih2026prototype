@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { useTheme } from '../store/ThemeContext.jsx'
 import api from '../api/client'
-import { Moon, Sun, ShieldCheck, Zap, Users, Globe, Factory } from 'lucide-react'
+import { Moon, Sun, ShieldCheck, Zap, Users, Globe, Factory, Megaphone } from 'lucide-react'
 
 const DEMO_ACCOUNTS = [
   { label: 'Problem Owner', name: 'Suresh Kumar', role: 'District Collector, Gumla', email: 'suresh.kumar@gov.jh.in', hex: '#f97316', icon: ShieldCheck },
@@ -112,6 +112,7 @@ export default function LoginPage() {
               ))}
             </div>
             <p className="text-blue-200/40 text-[11px] mt-3 text-center">Password for all: <span className="font-mono text-blue-100/70 bg-white/10 px-1.5 py-0.5 rounded-md">demo123</span></p>
+            <p className="text-blue-200/50 text-[11px] mt-1.5 text-center">Spotted a local problem? <Link to="/report" className="text-teal-300 hover:text-teal-200 font-semibold underline decoration-teal-500/50 hover:decoration-teal-300">Report it — no login needed →</Link></p>
           </div>
         </div>
       </div>

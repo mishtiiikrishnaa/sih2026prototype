@@ -10,6 +10,7 @@ import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import DashboardPage from './pages/DashboardPage'
 import IndustryPage from './pages/IndustryPage'
+import ReportPage from './pages/ReportPage'
 
 function RequireAuth({ children }) {
   const token = useAuthStore((s) => s.token)
@@ -26,6 +27,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/report" element={<ReportPage />} />
         <Route
           path="/"
           element={<RequireAuth><Layout /></RequireAuth>}
