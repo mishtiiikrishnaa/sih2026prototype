@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Users, Zap, CheckCircle, MapPin, Clock, Banknote, Megaphone, LocateFixed, Film, Image } from 'lucide-react'
+import { ArrowLeft, Users, Zap, CheckCircle, MapPin, Clock, Banknote, Megaphone, LocateFixed, Film, Image, School, Search, X, Loader2 } from 'lucide-react'
 import api from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import { DomainBadge, DifficultyBadge, StatusBadge } from '../components/problems/ProblemCard'
@@ -16,6 +16,12 @@ export default function ProblemDetailPage() {
   const [expressing, setExpressing] = useState(false)
   const [expressed, setExpressed] = useState(false)
   const [message, setMessage] = useState('')
+  const [assignOpen, setAssignOpen] = useState(false)
+  const [faculty, setFaculty] = useState([])
+  const [facultyLoading, setFacultyLoading] = useState(false)
+  const [assignQ, setAssignQ] = useState('')
+  const [assigningId, setAssigningId] = useState(null)
+  const [assignError, setAssignError] = useState('')
 
   useEffect(() => {
     async function load() {
@@ -67,6 +73,34 @@ export default function ProblemDetailPage() {
     }
   }
 
+  async function openAssign() {
+    setAssignOpen(true)
+    setAssignError('')
+    if (faculty.length) return
+    setFacultyLoading(true)
+    try {
+      const { data } = await api.get('/users?role=faculty')
+      setFaculty(data)
+    } catch {
+      setAssignError('Could not load the faculty directory.')
+    } finally {
+      setFacultyLoading(false)
+    }
+  }
+
+  async function handleAssign(facultyId) {
+    setAssigningId(facultyId)
+    setAssignError('')
+    try {
+      const { data } = await api.patch(`/problems/${id}/assign`, { faculty_id: facultyId })
+      setAssignOpen(false)
+      navigate(`/projects/${data.project_id}`)
+    } catch (e) {
+      setAssignError(e.response?.data?.detail || 'Assignment failed')
+      setAssigningId(null)
+    }
+  }
+
   if (loading) return (
     <div className="p-6 animate-pulse">
       <div className="h-6 bg-bg-secondary rounded w-1/2 mb-4" />
@@ -81,6 +115,8 @@ export default function ProblemDetailPage() {
 
   const isSolver = user?.role === 'faculty' || user?.role === 'student'
   const isOwner = user?.role === 'problem_owner'
+  const isAssigner = isOwner || user?.role === 'gov_admin'
+  const goodFaculty = faculty.filter(f => (f.full_name + ' ' + (f.department || '') + ' ' + (f.institution || '')).toLowerCase().includes(assignQ.toLowerCase()))
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -203,6 +239,25 @@ export default function ProblemDetailPage() {
                 )}
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Owner/admin: assign directly to a university faculty */}
+      {isAssigner && problem.status === 'open' && (
+        <div className="card p-5 mb-4 border-emerald-200 bg-emerald-50">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <h2 className="font-semibold text-emerald-900 mb-1 flex items-center gap-2">
+                <School size={16} /> Assign to a University
+              </h2>
+              <p className="text-xs text-emerald-800/70">
+                Skip the wait — push this challenge directly to a faculty lead. Their student team is formed automatically.
+              </p>
+            </div>
+            <button onClick={openAssign} className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-sm font-semibold transition-colors shadow-md shadow-emerald-600/20">
+              Assign
+            </button>
           </div>
         </div>
       )}

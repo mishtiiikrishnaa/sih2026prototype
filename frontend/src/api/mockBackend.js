@@ -453,6 +453,34 @@ export function mockRequest(method, urlPath, body, config) {
     }) }
   }
 
+  const assignMatch = url.match(/^\/problems\/(\d+)\/assign$/)
+  if (method === 'patch' && assignMatch) {
+    const pid = parseInt(assignMatch[1], 10)
+    const p = findProblem(pid)
+    if (!p) fail(404, 'Problem not found')
+    if (p.owner_id !== me.id && me.role !== 'gov_admin') fail(403, 'Only the problem owner or a government admin can assign this challenge')
+    const target = users.find(u => u.id === body.faculty_id && u.role === 'faculty')
+    if (!target) fail(400, 'Select a valid faculty member')
+    let proj = projects.find(x => x.problem_id === pid)
+    if (!proj) {
+      proj = { id: nextProjectId(), problem_id: pid, title: `Project: ${p.title}`, description: '', stage: 'discovery', outcome_evidence: null, outcome_verified_at: null, solution_proposal: null, seeking_collab: false, needs_funding: false, patents: [], startups_created: 0, member_ids: [], milestones: [], created_at: isoNow(), updated_at: isoNow() }
+      p.status = 'in_progress'
+      state.projects.push(proj)
+    }
+    if (!proj.member_ids) proj.member_ids = []
+    if (!proj.member_ids.some(([uid]) => uid === target.id)) proj.member_ids.push([target.id, 'lead'])
+    const teammates = users
+      .filter(u => u.role === 'student' && u.institution === target.institution)
+      .concat(users.filter(u => u.role === 'student' && u.institution !== target.institution))
+      .filter(u => !proj.member_ids.some(([uid]) => uid === u.id))
+      .slice(0, 3)
+    for (const s of teammates) proj.member_ids.push([s.id, 'member'])
+    notify(target.id, 'Challenge assigned to you', `The department assigned you to lead "${p.title}". Form your student team and start.`, `/projects/${proj.id}`)
+    for (const s of teammates) notify(s.id, 'Added to a project team', `You were added to the team for "${p.title}". Coordinate with your faculty lead.`, `/projects/${proj.id}`)
+    saveState(state)
+    return { data: { message: `Challenge #${pid} assigned to ${target.full_name}`, project_id: proj.id, lead_name: target.full_name, team: teammates.map(t => t.full_name) } }
+  }
+
   const acceptMatch = url.match(/^\/projects\/interest\/(\d+)\/accept$/)
   if (method === 'patch' && acceptMatch) {
     const reqId = parseInt(acceptMatch[1], 10)
