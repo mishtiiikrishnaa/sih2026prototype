@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/authStore'
 import { useTheme } from '../../store/ThemeContext.jsx'
 import api from '../../api/client'
 import {
-  LayoutDashboard, Search, PlusCircle, Zap, FolderKanban, Factory, Megaphone,
+  LayoutDashboard, Search, PlusCircle, Zap, FolderKanban, Factory,
   LogOut, Sun, Moon, Bell, CheckCheck
 } from 'lucide-react'
 import clsx from 'clsx'
@@ -139,7 +139,6 @@ export default function Layout() {
           {(role === 'problem_owner') && (<NavItem to="/wizard" icon={PlusCircle} label="Post" />)}
           {(role === 'faculty' || role === 'student') && (<NavItem to="/matches" icon={Zap} label="Matches" />)}
           {(role === 'industry_partner' || role === 'gov_admin') && (<NavItem to="/industry" icon={Factory} label="Industry" />)}
-          <NavItem to="/report" icon={Megaphone} label="Report" />
           <NavItem to="/projects" icon={FolderKanban} label="Projects" />
           {(role === 'gov_admin') && (<NavItem to="/dashboard" icon={LayoutDashboard} label="Dashboard" />)}
         </nav>

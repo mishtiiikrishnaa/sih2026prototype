@@ -9,7 +9,6 @@ import MatchesPage from './pages/MatchesPage'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import DashboardPage from './pages/DashboardPage'
-import ReportPage from './pages/ReportPage'
 import IndustryPage from './pages/IndustryPage'
 
 function RequireAuth({ children }) {
@@ -27,7 +26,6 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/report" element={<ReportPage />} />
         <Route
           path="/"
           element={<RequireAuth><Layout /></RequireAuth>}
