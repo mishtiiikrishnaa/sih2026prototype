@@ -28,11 +28,7 @@ export default function LoginPage() {
       const { data } = await api.post('/auth/token', form, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
       setAuth(data.access_token, data.user); navigate('/')
     } catch (err) {
-      if (!err.response) {
-        setError('Backend unreachable — deploy backend to Render (render.yaml) or use localhost:9000.')
-      } else {
-        setError(err.response?.data?.detail || 'Invalid credentials. Try a demo account below.')
-      }
+      setError(err.response?.data?.detail || 'Invalid credentials. Try a demo account below.')
     } finally { setLoading(false) }
   }
   function fillDemo(acct) { setEmail(acct.email); setPassword('demo123'); setError('') }
