@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Users, Zap, CheckCircle, MapPin, Clock, Banknote } from 'lucide-react'
+import { ArrowLeft, Users, Zap, CheckCircle, MapPin, Clock, Banknote, Megaphone, LocateFixed, Film, Image } from 'lucide-react'
 import api from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import { DomainBadge, DifficultyBadge, StatusBadge } from '../components/problems/ProblemCard'
@@ -94,6 +94,11 @@ export default function ProblemDetailPage() {
           {(problem.domain || []).map(d => <DomainBadge key={d} domain={d} />)}
           <DifficultyBadge difficulty={problem.difficulty} />
           <StatusBadge status={problem.status} />
+          {problem.community_submitted && (
+            <span className="badge bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-200">
+              <Megaphone size={11} className="inline mr-1" />Community-submitted{problem.submitted_by ? ` by ${problem.submitted_by}` : ''}
+            </span>
+          )}
         </div>
         <h1 className="text-xl font-bold text-text-primary mb-2">{problem.title}</h1>
         <p className="text-xs text-text-secondary">
@@ -103,9 +108,20 @@ export default function ProblemDetailPage() {
 
         <div className="flex flex-wrap gap-4 mt-4 text-sm text-text-secondary">
           {problem.district && <span className="flex items-center gap-1"><MapPin size={13}/>{problem.district}</span>}
+          {problem.location && <span className="flex items-center gap-1"><LocateFixed size={13}/>{problem.location}</span>}
           {problem.timeline && <span className="flex items-center gap-1"><Clock size={13}/>{problem.timeline}</span>}
           {problem.budget && <span className="flex items-center gap-1"><Banknote size={13}/>{problem.budget}</span>}
         </div>
+
+        {(problem.attachments || []).length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-4">
+            {problem.attachments.map((a, i) => (
+              <span key={i} className="inline-flex items-center gap-1.5 badge bg-bg-secondary text-text-secondary text-xs">
+                {a.type === 'video' ? <Film size={12} /> : <Image size={12} />} {a.name}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Detail sections */}

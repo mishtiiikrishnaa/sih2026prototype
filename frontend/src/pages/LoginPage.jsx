@@ -1,15 +1,17 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
 import { useTheme } from '../store/ThemeContext.jsx'
 import api from '../api/client'
-import { LogIn, Moon, Sun, ShieldCheck, Zap, Users, Globe } from 'lucide-react'
+import { LogIn, Moon, Sun, ShieldCheck, Zap, Users, Globe, Factory, Megaphone } from 'lucide-react'
 
 const DEMO_ACCOUNTS = [
   { label: 'Problem Owner', name: 'Suresh Kumar', role: 'District Collector, Gumla', email: 'suresh.kumar@gov.jh.in', color: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-700 text-orange-800 dark:text-orange-200', dot: 'bg-orange-500', icon: ShieldCheck },
   { label: 'Faculty', name: 'Dr. Priya Singh', role: 'Civil Engineering, BIT Mesra', email: 'priya.singh@bitmesra.ac.in', color: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700 text-blue-800 dark:text-blue-200', dot: 'bg-blue-500', icon: Zap },
   { label: 'Student', name: 'Rahul Sharma', role: 'B.Tech Student, BIT Mesra', email: 'rahul.sharma@bitmesra.ac.in', color: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700 text-green-800 dark:text-green-200', dot: 'bg-green-500', icon: Users },
   { label: 'Gov. Admin', name: 'Dr. Nirmala Soren', role: 'Principal Secretary, Education', email: 'secretary@education.jh.gov.in', color: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-700 text-purple-800 dark:text-purple-200', dot: 'bg-purple-500', icon: Globe },
+  { label: 'Industry Partner', name: 'Ankit Jha', role: 'Tata Steel R&D, Jamshedpur', email: 'ankit.jha@company.in', color: 'bg-rose-50 dark:bg-rose-900/20 border-rose-200 dark:border-rose-700 text-rose-800 dark:text-rose-200', dot: 'bg-rose-500', icon: Factory },
+  { label: 'Citizen', name: 'Mukesh Ram', role: 'Resident, Bishunpur, Gumla', email: 'mukesh.ram@citizen.in', color: 'bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-700 text-teal-800 dark:text-teal-200', dot: 'bg-teal-500', icon: Megaphone },
 ]
 
 export default function LoginPage() {
@@ -105,6 +107,7 @@ export default function LoginPage() {
               ))}
             </div>
             <p className="text-blue-200/40 text-[11px] mt-3 text-center">Password for all: <span className="font-mono bg-white/10 px-1 rounded">demo123</span></p>
+            <p className="text-blue-200/50 text-[11px] mt-1.5 text-center">Want to report a local problem? <Link to="/report" className="text-teal-300 hover:text-teal-200 font-semibold underline decoration-teal-500/50 hover:decoration-teal-300">Report without signing in →</Link></p>
           </div>
         </div>
       </div>

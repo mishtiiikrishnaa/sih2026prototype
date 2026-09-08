@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, ArrowRight, Check, Sparkles, Loader2, Edit3 } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Check, Sparkles, Loader2, Edit3, AlertTriangle } from 'lucide-react'
 import api from '../api/client'
 
 const STEPS = [
@@ -293,6 +293,23 @@ export default function WizardPage() {
               </button>
             </div>
           </div>
+
+          {(generated.similar_problems || []).length > 0 && (
+            <div className="mb-5 rounded-xl border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/15 p-4">
+              <p className="text-xs font-bold text-amber-800 dark:text-amber-300 mb-2 flex items-center gap-1.5">
+                <AlertTriangle size={14} /> {generated.similar_problems.length} existing challenge{(generated.similar_problems.length > 1 ? 's' : '')} look similar to this
+              </p>
+              <ul className="space-y-1.5">
+                {generated.similar_problems.map(sp => (
+                  <li key={sp.problem_id} className="flex items-center justify-between gap-2 text-xs">
+                    <button onClick={() => navigate(`/problems/${sp.problem_id}`)} className="text-left text-amber-900 dark:text-amber-100 hover:underline flex-1 truncate">{sp.title}</button>
+                    <span className="shrink-0 badge bg-amber-100 text-amber-800 text-[10px]">{sp.match_score}% overlap</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-2">You can still publish a refined version — but consider building on the existing challenge instead to avoid duplication.</p>
+            </div>
+          )}
 
           <div className="space-y-4">
             <div>

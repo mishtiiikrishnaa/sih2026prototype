@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { FolderKanban, ArrowRight, CheckCircle } from 'lucide-react'
+import { FolderKanban, ArrowRight, CheckCircle, Handshake, Banknote, FileText, Rocket } from 'lucide-react'
 import api from '../api/client'
 import clsx from 'clsx'
 
@@ -98,6 +98,18 @@ export default function ProjectsPage() {
                     ))}
                     {p.problem_district && (
                       <span className="text-xs text-text-secondary">📍 {p.problem_district}</span>
+                    )}
+                    {p.seeking_collab && (
+                      <span className="badge bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-200 text-xs"><Handshake size={11} className="inline mr-1" />Seeking collab</span>
+                    )}
+                    {p.needs_funding && (
+                      <span className="badge bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-200 text-xs"><Banknote size={11} className="inline mr-1" />Needs funding</span>
+                    )}
+                    {p.patents?.length > 0 && (
+                      <span className="badge bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-200 text-xs"><FileText size={11} className="inline mr-1" />{p.patents.length} patent{p.patents.length > 1 ? 's' : ''}</span>
+                    )}
+                    {p.startups_created > 0 && (
+                      <span className="badge bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-200 text-xs"><Rocket size={11} className="inline mr-1" />{p.startups_created} startup{p.startups_created > 1 ? 's' : ''}</span>
                     )}
                   </div>
 

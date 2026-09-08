@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, Plus, Loader2, Shield } from 'lucide-react'
+import { ArrowLeft, CheckCircle, Plus, Loader2, Shield, FileText, Rocket, Handshake, Banknote, UserPlus, Send } from 'lucide-react'
 import api from '../api/client'
 import { useAuthStore } from '../store/authStore'
 import clsx from 'clsx'
@@ -34,6 +34,18 @@ export default function ProjectDetailPage() {
   const [savingMilestone, setSavingMilestone] = useState(false)
   const [verifyEvidence, setVerifyEvidence] = useState('')
   const [verifying, setVerifying] = useState(false)
+  const [proposalText, setProposalText] = useState('')
+  const [editingProposal, setEditingProposal] = useState(false)
+  const [savingProposal, setSavingProposal] = useState(false)
+  const [solvers, setSolvers] = useState([])
+  const [inviteOpen, setInviteOpen] = useState(false)
+  const [inviteUserId, setInviteUserId] = useState('')
+  const [inviteRole, setInviteRole] = useState('member')
+  const [inviting, setInviting] = useState(false)
+  const [patentTitle, setPatentTitle] = useState('')
+  const [patentStatus, setPatentStatus] = useState('filed')
+  const [patentOpen, setPatentOpen] = useState(false)
+  const [filingPatent, setFilingPatent] = useState(false)
 
   async function load() {
     try {
@@ -94,6 +106,54 @@ export default function ProjectDetailPage() {
     }
   }
 
+  async function saveProposal() {
+    setSavingProposal(true)
+    try {
+      await api.patch(`/projects/${id}/proposal`, { description: proposalText })
+      setEditingProposal(false)
+      await load()
+    } catch (e) {
+      alert(e.response?.data?.detail || 'Could not save solution proposal')
+    } finally {
+      setSavingProposal(false)
+    }
+  }
+
+  async function loadSolvers() {
+    try {
+      const { data } = await api.get('/users')
+      setSolvers(data.filter(u => !project?.members?.some(m => m.user_id === u.id)))
+    } catch { /* ignore */ }
+  }
+
+  async function inviteMember() {
+    if (!inviteUserId) return
+    setInviting(true)
+    try {
+      await api.post(`/projects/${id}/members`, { user_id: parseInt(inviteUserId, 10), role_in_team: inviteRole })
+      setInviteOpen(false); setInviteUserId(''); setInviteRole('member')
+      await load()
+    } catch (e) {
+      alert(e.response?.data?.detail || 'Could not add member')
+    } finally {
+      setInviting(false)
+    }
+  }
+
+  async function filePatent() {
+    if (!patentTitle.trim()) return
+    setFilingPatent(true)
+    try {
+      await api.post(`/projects/${id}/patents`, { title: patentTitle, status: patentStatus })
+      setPatentOpen(false); setPatentTitle(''); setPatentStatus('filed')
+      await load()
+    } catch (e) {
+      alert(e.response?.data?.detail || 'Could not file patent')
+    } finally {
+      setFilingPatent(false)
+    }
+  }
+
   if (loading) return (
     <div className="p-6 animate-pulse">
       <div className="h-6 bg-bg-secondary rounded w-1/2 mb-4" />
@@ -107,6 +167,13 @@ export default function ProjectDetailPage() {
   const canVerify = user?.role === 'problem_owner' || user?.role === 'gov_admin'
   const canAdvance = user?.role !== 'problem_owner'
   const nextStage = STAGES[currentStageIdx + 1]
+  const me = project.members?.find(m => m.user_id === user?.id)
+  const isTeamMember = !!me
+  const isLead = me?.role_in_team === 'lead'
+  const isOwnerRole = user?.role === 'problem_owner'
+  const canEditProposal = isTeamMember && !isOwnerRole
+  const canInvite = isLead || isOwnerRole
+  const canFilePatent = isTeamMember && !isOwnerRole
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
@@ -140,6 +207,8 @@ export default function ProjectDetailPage() {
             <span key={d} className="badge bg-blue-100 text-blue-800 text-xs">{d}</span>
           ))}
           {project.problem_district && <span className="text-xs text-text-secondary">📍 {project.problem_district}</span>}
+          {project.seeking_collab && <span className="badge bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-200 text-xs"><Handshake size={11} className="inline mr-1" />Open to co-development</span>}
+          {project.needs_funding && <span className="badge bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-200 text-xs"><Banknote size={11} className="inline mr-1" />Seeking funding</span>}
         </div>
       </div>
 
@@ -216,24 +285,143 @@ export default function ProjectDetailPage() {
 
       {/* Team */}
       <div className="card p-5 mb-4">
-        <h2 className="text-sm font-semibold text-text-primary mb-3">Team ({project.members?.length || 0} members)</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-text-primary">Team ({project.members?.length || 0} members)</h2>
+          {canInvite && (
+            <button onClick={async () => { setInviteOpen(!inviteOpen); if (!inviteOpen && solvers.length === 0) await loadSolvers() }} className="btn-ghost text-xs">
+              <UserPlus size={13} /> Invite
+            </button>
+          )}
+        </div>
         <div className="space-y-2">
           {(project.members || []).map(m => (
             <div key={m.user_id} className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-blue-700 flex items-center justify-center text-white text-xs font-bold">
+              <div className={clsx('w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold', m.role_in_team?.startsWith('industry') ? 'bg-rose-600' : 'bg-blue-700')}>
                 {m.avatar_initials || m.full_name?.slice(0, 2).toUpperCase()}
               </div>
               <div>
                 <p className="text-sm font-medium text-text-primary">{m.full_name}</p>
                 <p className="text-xs text-text-secondary">{m.department} · {m.institution}</p>
               </div>
-              <span className={clsx('badge text-xs ml-auto', m.role_in_team === 'lead' ? 'bg-blue-100 text-blue-700' : 'bg-bg-secondary text-text-secondary')}>
+              <span className={clsx('badge text-xs ml-auto', m.role_in_team === 'lead' ? 'bg-blue-100 text-blue-700' : m.role_in_team?.startsWith('industry') ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-200' : 'bg-bg-secondary text-text-secondary')}>
                 {m.role_in_team}
               </span>
             </div>
           ))}
         </div>
+
+        {inviteOpen && (
+          <div className="mt-4 pt-4 border-t border-border space-y-3">
+            <p className="text-xs font-semibold text-text-primary">Add a team member</p>
+            <div className="grid md:grid-cols-3 gap-2">
+              <select className="input text-xs md:col-span-2" value={inviteUserId} onChange={e => setInviteUserId(e.target.value)}>
+                <option value="">Select faculty / student / industry…</option>
+                {solvers.map(u => (
+                  <option key={u.id} value={u.id}>{u.full_name} · {u.institution}</option>
+                ))}
+              </select>
+              <select className="input text-xs" value={inviteRole} onChange={e => setInviteRole(e.target.value)}>
+                <option value="member">Member</option>
+                <option value="co-investigator">Co-investigator</option>
+                <option value="mentor">Mentor</option>
+              </select>
+            </div>
+            <div className="flex gap-2">
+              <button onClick={inviteMember} disabled={inviting || !inviteUserId} className="btn-primary text-xs flex items-center gap-1.5">
+                {inviting ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />} Send invite
+              </button>
+              <button onClick={() => setInviteOpen(false)} className="btn-secondary text-xs">Cancel</button>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Solution proposal */}
+      {(project.solution_proposal || canEditProposal) && (
+        <div className="card p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+              <Shield size={15} className="text-blue-600" /> Solution Proposal
+            </h2>
+            {canEditProposal && !editingProposal && (
+              <button onClick={() => { setProposalText(project.solution_proposal || ''); setEditingProposal(true) }} className="btn-ghost text-xs">
+                {project.solution_proposal ? 'Edit' : 'Write proposal'}
+              </button>
+            )}
+          </div>
+          {editingProposal ? (
+            <div className="space-y-3">
+              <textarea
+                className="input text-sm"
+                rows={4}
+                placeholder="Describe the proposed solution approach, methodology, intended impact, and implementation plan…"
+                value={proposalText}
+                onChange={e => setProposalText(e.target.value)}
+              />
+              <div className="flex gap-2">
+                <button onClick={saveProposal} disabled={savingProposal} className="btn-primary text-xs">
+                  {savingProposal ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />} Save proposal
+                </button>
+                <button onClick={() => setEditingProposal(false)} className="btn-secondary text-xs">Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-sm text-text-primary bg-bg-primary rounded-lg p-3 leading-relaxed">
+              {project.solution_proposal || <em className="text-text-secondary">No proposal yet</em>}
+            </p>
+          )}
+        </div>
+      )}
+
+      {/* Patents / IP */}
+      {(canFilePatent || (project.patents || []).length > 0) && (
+        <div className="card p-5 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-semibold text-text-primary flex items-center gap-2">
+              <FileText size={15} className="text-violet-600" /> Intellectual Property
+              {project.startups_created > 0 && <span className="badge bg-amber-100 text-amber-700 text-[10px]"><Rocket size={10} className="inline mr-1" />{project.startups_created} startup{project.startups_created > 1 ? 's' : ''}</span>}
+            </h2>
+            {canFilePatent && !patentOpen && (
+              <button onClick={() => setPatentOpen(true)} className="btn-ghost text-xs">
+                <Plus size={13} /> File patent
+              </button>
+            )}
+          </div>
+          {patentOpen && (
+            <div className="bg-bg-primary rounded-lg p-4 mb-3 space-y-3">
+              <input className="input text-xs" placeholder="Patent title" value={patentTitle} onChange={e => setPatentTitle(e.target.value)} />
+              <div className="flex gap-2">
+                <select className="input text-xs" value={patentStatus} onChange={e => setPatentStatus(e.target.value)}>
+                  <option value="filed">Filed</option>
+                  <option value="published">Published</option>
+                  <option value="granted">Granted</option>
+                </select>
+                <button onClick={filePatent} disabled={filingPatent || !patentTitle.trim()} className="btn-primary text-xs flex-1">
+                  {filingPatent ? <Loader2 size={12} className="animate-spin" /> : null} File
+                </button>
+                <button onClick={() => setPatentOpen(false)} className="btn-secondary text-xs">Cancel</button>
+              </div>
+            </div>
+          )}
+          {(project.patents || []).length === 0 ? (
+            <p className="text-xs text-text-secondary text-center py-3">No patents recorded</p>
+          ) : (
+            <div className="space-y-2">
+              {project.patents.map(pt => (
+                <div key={pt.id} className="flex items-center justify-between p-3 bg-bg-primary rounded-lg">
+                  <p className="text-sm font-medium text-text-primary">{pt.title}</p>
+                  <div className="flex items-center gap-2">
+                    {pt.filed_at && <span className="text-[11px] text-text-secondary">{new Date(pt.filed_at).toLocaleDateString('en-IN')}</span>}
+                    <span className={clsx('badge text-[11px]', pt.status === 'granted' ? 'bg-green-100 text-green-700' : pt.status === 'published' ? 'bg-amber-100 text-amber-700' : 'bg-violet-100 text-violet-700')}>
+                      {pt.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Milestones */}
       <div className="glass-card p-5">

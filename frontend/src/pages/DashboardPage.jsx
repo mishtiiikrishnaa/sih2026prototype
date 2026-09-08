@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { LayoutDashboard, Users, Target, Activity } from 'lucide-react'
+import { LayoutDashboard, Users, Target, Activity, Factory, FileText, Rocket, Megaphone } from 'lucide-react'
 import ReactECharts from 'echarts-for-react'
 import api from '../api/client'
 
@@ -112,6 +112,14 @@ export default function DashboardPage() {
         <StatCard title="Engaged Solvers" value={summary.total_solvers} icon={Users} color="text-violet-600" bg="bg-violet-50" />
       </div>
 
+      {/* Impact Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <StatCard title="Industry Partners" value={summary.total_industry_partners} icon={Factory} color="text-rose-600" bg="bg-rose-50" />
+        <StatCard title="Patents Filed / Granted" value={summary.patents_filed} icon={FileText} color="text-violet-600" bg="bg-violet-50" />
+        <StatCard title="Startups Created" value={summary.startups_created} icon={Rocket} color="text-amber-600" bg="bg-amber-50" />
+        <StatCard title="Community Submissions" value={summary.community_submissions} icon={Megaphone} color="text-teal-600" bg="bg-teal-50" />
+      </div>
+
       {/* Charts Row 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
         <div className="glass-card p-5">
@@ -148,6 +156,30 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Industry participation */}
+      {(stats.industry_participation || []).length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+          <div className="glass-card p-5">
+            <h2 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <Factory size={15} className="text-rose-600" /> Industry Participation (Projects Engaged)
+            </h2>
+            <div className="space-y-4">
+              {stats.industry_participation.slice(0, 5).map((inst, i) => (
+                <div key={inst.institution} className="flex items-center gap-3">
+                  <div className="w-6 h-6 rounded bg-rose-100 flex items-center justify-center text-xs font-bold text-rose-600">
+                    {i + 1}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-text-primary truncate">{inst.institution}</p>
+                  </div>
+                  <div className="text-sm font-bold text-text-primary">{inst.projectsEngaged} project{inst.projectsEngaged > 1 ? 's' : ''}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
